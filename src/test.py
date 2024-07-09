@@ -59,6 +59,7 @@ LaB6_refiner = rf.Refiner(
     phases = [{'cif_abs_path':'LaB6.cif','phase_name':'LaB6','scale':1},],
     gsas2_scratch = 'gsas2_scratch',
     q_range = [0.5,4.1],
+    GSASII_path = '/opt/anaconda3/envs/GSASII/GSAS-II/GSASII',
     da_input_bkg = da_input_bkg
 )
 

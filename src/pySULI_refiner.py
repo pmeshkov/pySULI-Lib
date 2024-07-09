@@ -14,7 +14,7 @@ import pySULI_general
 
 from IPython.display import clear_output
 
-def set_GSAS_II(user):
+def set_GSAS_II_user(user):
     # we need to append GSASII directory to the system path
     match user:
         case "mtopsakal":
@@ -32,10 +32,24 @@ def set_GSAS_II(user):
     
     return G2sc, pybaselines
 
+def set_GSAS_II_path(GSASII_path):
+    sys.path += [GSASII_path]
+    
+    # we then import GSASIIscriptable
+    import GSASIIscriptable as G2sc
+    import pybaselines # this comes with gsas2_package
+    
+    return G2sc, pybaselines
+    
 class Refiner:
-    def __init__(self, nc_path, phases, gsas2_scratch, q_range, user = "pmeshkov", da_input_bkg=None):
-        G2sc, pybaselines = set_GSAS_II(user)
+    def __init__(self, nc_path, phases, gsas2_scratch, q_range, GSASII_path = None, da_input_bkg=None):
         
+        if GSASII_path is not None:
+            G2sc, pybaselines = set_GSAS_II_path(GSASII_path)
+        else:
+            print("GSAS-II path not found.\n Install GSAS-II, and insert the GSAS-II_path into the refiner class.")
+            return 0
+            
         # set instance variables
         self.nc_path = nc_path
         self.phases = phases
