@@ -11,21 +11,21 @@ os.chdir('%s/%s'%(here,example_data_path))
 os.listdir()
 
 os.makedirs('gsas2_scratch',exist_ok=True)
-f = open("gsas2_scratch/gsas.instprm", "w")
-f.write("""#GSAS-II instrument parameter file; do not add/delete items!
-Type:PXC
-Bank:1.0
-Lam:0.1824
-Polariz.:7.277695011573669
-Azimuth:0.0
-Zero:-0.00025200085768731445
-U:129.15268004188428
-V:1.816645496453032
-W:0.43034683098418736
-X:-0.0661572816525536
-Y:-0.9270864296622138
-Z:0.02775503495558348
-SH/L:0.002""")
+with open("gsas2_scratch/gsas.instprm", "w") as f:
+    f.write("""#GSAS-II instrument parameter file; do not add/delete items!
+    Type:PXC
+    Bank:1.0
+    Lam:0.1824
+    Polariz.:7.277695011573669
+    Azimuth:0.0
+    Zero:-0.00025200085768731445
+    U:129.15268004188428
+    V:1.816645496453032
+    W:0.43034683098418736
+    X:-0.0661572816525536
+    Y:-0.9270864296622138
+    Z:0.02775503495558348
+    SH/L:0.002""")
 
 def refinement_recipe(refiner,update_instprm=True):
 

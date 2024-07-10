@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 
-import pySULI_general
+import functions_lib_version
 
 from IPython.display import clear_output
 
@@ -101,7 +101,7 @@ class Refiner:
             
             # set gsas intensity profile and save as xy file
             Y_to_gsas = self.y_baseline+Y_to_gsas*self.y_scale
-            X_to_gsas = np.rad2deg(pySULI_general.q_to_twotheta(self.da_i2d_m.radial.values, wavelength=(ds.attrs['wavelength']*1.0e10)))
+            X_to_gsas = np.rad2deg(functions_lib_version.q_to_twotheta(self.da_i2d_m.radial.values, wavelength=(ds.attrs['wavelength']*1.0e10)))
             np.savetxt('%s/data.xy'%gsas2_scratch, np.column_stack( (X_to_gsas,Y_to_gsas) ), fmt='%.4f %.4f')
 
             # save ds as an instance variable 
@@ -110,7 +110,10 @@ class Refiner:
             # save gpx as an instance variable
             self.gpx = G2sc.G2Project(newgpx='%s/gsas.gpx'%gsas2_scratch)
             self.gpx.data['Controls']['data']['max cyc'] = 100
-            self.gpx.add_powder_histogram('%s/data.xy'%gsas2_scratch,'%s/gsas.instprm'%gsas2_scratch)
+            try:
+                self.gpx.add_powder_histogram('%s/data.xy'%gsas2_scratch,'%s/gsas.instprm'%gsas2_scratch)
+            except:
+                self.gpx.add_powder_histogram('%s/data.xy'%gsas2_scratch,'%s/gsas.instprm'%gsas2_scratch)
 
             hist   = self.gpx.histograms()[0]
             for p in phases:
@@ -143,7 +146,7 @@ class Refiner:
             {"X_in_tth": gsas_X.astype('float32')},
             )
         self.ds = self.ds.assign_coords(
-            {"X_in_d": pySULI_general.q_to_d(self.da_i2d_m.radial.values.astype('float32'))},
+            {"X_in_d": functions_lib_version.q_to_d(self.da_i2d_m.radial.values.astype('float32'))},
             )
 
         self.ds['Y_obs'] = xr.DataArray(
@@ -235,14 +238,14 @@ class Refiner:
         ax.set_xlim([plt_range[0],plt_range[1]])
 
         # find lattice constants for each phase and save them to use as label strings in subplot 2
-        phases = pySULI_general.get_valid_phases(self.gpx)
+        phases = functions_lib_version.get_valid_phases(self.gpx)
         phase_ct = len(phases)
         label_strs = [None] * phase_ct
         label_colors = [None] * phase_ct
         for ep, phase in enumerate(phases):
             label_strs[ep] = phase
             consts = iter(['a', 'b', 'c'])
-            for value in np.unique(list(pySULI_general.get_cell_consts(self.gpx, phase).values())):
+            for value in np.unique(list(functions_lib_version.get_cell_consts(self.gpx, phase).values())):
                 label_strs[ep] = label_strs[ep] + "\n(" + next(consts) + " = " + str(round(value,6)) + ")"
             label_colors[ep] = "C%d" % ep
             
@@ -263,12 +266,12 @@ class Refiner:
         # use gpx_plotter() to plot intensities as points, stems, in subplot 3, subplot 2, respectively
         ax = ax_dict["Y"]
         ax_bottom = ax_dict["P"]
-        pySULI_general.gpx_plotter(
+        functions_lib_version.gpx_plotter(
             self.gpx,
             line_axes=[ax,ax_bottom],
             stem_axes=[ax_bottom],
             radial_range=plt_range,
-            phases=pySULI_general.get_valid_phases(self.gpx),
+            phases=functions_lib_version.get_valid_phases(self.gpx),
             marker="o",
             stem=True,
             unit="d",
